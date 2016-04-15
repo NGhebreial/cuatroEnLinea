@@ -11,6 +11,7 @@ public class ControladorTexto {
 	private JuegoVista vista;
 	
 	public ControladorTexto(){
+		
 	}
 	
 	public void controlar(){
@@ -71,7 +72,7 @@ public class ControladorTexto {
 		if(fila != null){
 			modelo.añadeFicha(fila, coordenadaNum);
 			//Ahora se comprueba si hay victoria o empate
-			String mensaje = finJuego(fila, coordenadaNum);
+			String mensaje = finJuego();
 			if(!mensaje.equals("")){
 				//Victoria para las fichas actuales
 				if(mensaje.equals("victoria"))
@@ -98,35 +99,23 @@ public class ControladorTexto {
 	/**Comprueba si hay fin de juego para lanzar el mensaje correcto:
 	 * Si el tablero esta lleno y no hay victoria -> empate
 	 * Si hay 4 en linea de una de las fichas -> victoria para la ficha correspondiente*/
-	private String finJuego(Integer filaFicha, Integer columnaFicha){
+	private String finJuego(){
 		String mensaje = "";
 		ArrayList<ArrayList<String>> tablero = modelo.getTablero();
 		Boolean hayVictoria = false;
-		//Para los casos de prueba compruebo el tablero completo
-		if(filaFicha == null && columnaFicha == null){
-			//Primero compruebo si para la ficha actual hay victoria
-			for(int i = 0; i < modelo.FILAS && !hayVictoria; i++){
-				//Compruebo si en la fila hay alguna ficha actual
-				ArrayList<String> fila = tablero.get(i);
-				for(int j = 0; j < modelo.COLUMNAS && !hayVictoria; j++){
-					//Coincidencia en una posicion
-					if(fila.get(j).equals(modelo.getFichaActual())){
-						hayVictoria = compruebaVictoria(i, j, tablero);
-						//Si hay victoria -> mensaje = ganador
-						if(hayVictoria)
-							mensaje = "victoria";					
-					}
+		//Primero compruebo si para la ficha actual hay victoria
+		for(int i = 0; i < modelo.FILAS && !hayVictoria; i++){
+			//Compruebo si en la fila hay alguna ficha actual
+			ArrayList<String> fila = tablero.get(i);
+			for(int j = 0; j < modelo.COLUMNAS && !hayVictoria; j++){
+				//Coincidencia en una posicion
+				if(fila.get(j).equals(modelo.getFichaActual())){
+					hayVictoria = compruebaVictoria(i, j, tablero);
+					//Si hay victoria -> mensaje = ganador
+					if(hayVictoria)
+						mensaje = "victoria";					
 				}
 			}
-		}
-		/*Cuando envie las coordenadas, compruebo las fichas adyacentes a ella ya que es cuando habra victoria 
-		 * (se deduce que si acaba de poner una ficha es porque el tablero no esta lleno y 
-		 * aun no hay victoria -> comprobar en base a esa posicion) */
-		else{
-			hayVictoria = compruebaVictoria(filaFicha, columnaFicha, tablero);
-			//Si hay victoria -> mensaje = ganador
-			if(hayVictoria)
-				mensaje = "victoria";
 		}
 		//Si el mensaje es "" -> no ha habido victoria, comprobar que el tablero no esta lleno
 		if(mensaje.equals("")){
@@ -152,10 +141,10 @@ public class ControladorTexto {
 	private Boolean compruebaVictoria(int filaActual, int columnaActual, ArrayList<ArrayList<String>> tablero){
 		Boolean victoria = false;
 		//Compruebo en horizontal
-		victoria = compruebaHorizontal(filaActual, columnaActual, tablero);
+		victoria = compruebaHorizontal(filaActual + 1, columnaActual, tablero);
 		//Si no hay victoria -> compruebo en vertical
 		if(!victoria)
-			victoria = compruebaVertical(filaActual, columnaActual, tablero);
+			victoria = compruebaVertical(filaActual, columnaActual + 1, tablero);
 		//Si no -> comprobar diagonales
 		if(!victoria)
 			victoria = compruebaDiagonal(filaActual, columnaActual, tablero);
@@ -167,22 +156,35 @@ public class ControladorTexto {
 	private Boolean compruebaHorizontal(int filaActual, int columna, ArrayList<ArrayList<String>> tablero){
 		Boolean victoria = false;
 		//Contador para el numero de coincidencias
-		int i = compruebaPosicionVH(filaActual + 1, columna, filaActual, tablero, modelo.FILAS);
+		int i = compruebaPosicionVH(filaActual, columna, filaActual, tablero, modelo.FILAS);
 		//Si i = 4 -> victoria
 		if(i == 4) victoria = true;
 		return victoria;
 	}
 	
 	/**Comprueba si hay victoria en vertical*/
-	private Boolean compruebaVertical(int fila, int columnaActual, ArrayList<ArrayList<String>> tablero){
+	private Boolean compruebaVertical(int fila, int columna, ArrayList<ArrayList<String>> tablero){
 		Boolean victoria = false;
 		//Variable para el numero de coincidencias
-		int i = compruebaPosicionVH(fila, columnaActual + 1, columnaActual, tablero, modelo.COLUMNAS);
+		int i = compruebaPosicionVH(fila, columna, columna, tablero, modelo.COLUMNAS);
 		//Si i = 4 -> victoria
 		if(i == 4) victoria = true;
 		return victoria;
 	}
 	
+	/**Comprueba si hay victoria en diagonal*/
+	private Boolean compruebaDiagonal(int filaActual, int columnaActual, ArrayList<ArrayList<String>> tablero){
+		Boolean victoria = false;
+		//Primero hacia la derecha
+		int i = compruebaPosicionDiagonal(filaActual + 1, columnaActual + 1, tablero, true);
+		//Si no hay 4 -> comprobar hacia la izquierda
+		if(i == 4)
+			victoria = true;
+		else
+			i = compruebaPosicionDiagonal(filaActual + 1, columnaActual - 1, tablero, false);
+		if(i == 4) victoria = true;
+		return victoria;
+	}
 	
 	/**Recorre el tablero para contar el numero de fichas coincidentes.
 	 * En funcion de el indice pasado se tiene que comprobar en vertical o en horizontal*/
@@ -224,20 +226,6 @@ public class ControladorTexto {
 			}
 		}
 		return i;
-	}
-	
-	/**Comprueba si hay victoria en diagonal*/
-	private Boolean compruebaDiagonal(int filaActual, int columnaActual, ArrayList<ArrayList<String>> tablero){
-		Boolean victoria = false;
-		//Primero hacia la derecha
-		int i = compruebaPosicionDiagonal(filaActual + 1, columnaActual + 1, tablero, true);
-		//Si no hay 4 -> comprobar hacia la izquierda
-		if(i == 4)
-			victoria = true;
-		else
-			i = compruebaPosicionDiagonal(filaActual + 1, columnaActual - 1, tablero, false);
-		if(i == 4) victoria = true;
-		return victoria;
 	}
 	
 	/**Comprueba en diagonal hacia la derecha o en diagonal hacia la izquierda en funcion del parametro recibido*/
@@ -304,165 +292,5 @@ public class ControladorTexto {
 			}
 		}
 		return i;
-	}
-	public static void main(String[] args) {
-		ControladorTexto c = new ControladorTexto();
-		c.casosDePrueba(c);
-	}
-	private void casosDePrueba(ControladorTexto c){
-		JuegoModelo jm = new JuegoModelo();
-		ArrayList<ArrayList<String>> tablero = new ArrayList<>();
-		
-		JuegoVista vista = new JuegoVista(jm, c);
-		
-		/*1- Tablero lleno victoria vertical*/
-		for (int i=0; i<jm.FILAS; i++){
-			ArrayList<String> fila = new ArrayList<String>();
-			for(int j=0; j<jm.COLUMNAS; j++){
-				if(j%2 == 0)
-					fila.add("X");
-				else
-					fila.add("O");
-				
-			}
-			tablero.add(fila);
-		}
-		c.estructuraPrueba(jm, vista, tablero, c);
-		/*-------------------------------------------------------------*/
-		tablero = new ArrayList<>();
-		/*2 Tablero lleno victoria horizontal*/
-		for (int i=0; i<jm.FILAS; i++){
-			ArrayList<String> fila = new ArrayList<String>();
-			for(int j=0; j<jm.COLUMNAS; j++){
-					if(i%2 == 0)
-						fila.add("O");
-					else
-						fila.add("X");
-				
-			}
-			tablero.add(fila);
-		}
-		c.estructuraPrueba(jm, vista, tablero, c);
-		/*-------------------------------------------------------------*/
-		tablero = new ArrayList<>();
-		/*3 Tablero lleno victoria diagonal (Sin direccion)*/
-		for (int i=0; i<jm.FILAS; i++){
-			ArrayList<String> fila = new ArrayList<String>();
-			for(int j=0; j<jm.COLUMNAS; j++){
-				if(i%2==0){
-					if(j%2 == 0)
-						fila.add("X");
-					else
-						fila.add("O");
-				}
-				else
-					if(j%2 == 0)
-						fila.add("O");
-					else
-						fila.add("X");
-				
-			}
-			tablero.add(fila);
-		}
-		c.estructuraPrueba(jm, vista, tablero, c);
-		/*-------------------------------------------------------------*/
-		tablero = new ArrayList<>();
-		/*4 Tablero vacio victoria diagonal derecha*/
-		for (int i=0; i<jm.FILAS; i++){
-			ArrayList<String> fila = new ArrayList<String>();
-			for(int j=0; j<jm.COLUMNAS; j++){
-				fila.add("-");				
-			}
-			tablero.add(fila);
-		}
-		tablero.get(0).set(0, "X");
-		tablero.get(1).set(1, "X");
-		tablero.get(2).set(2, "X");
-		tablero.get(3).set(3, "X");
-		c.estructuraPrueba(jm, vista, tablero, c);
-		
-		/*-------------------------------------------------------------*/
-		tablero = new ArrayList<>();
-		/*5 Tablero vacio victoria diagonal izquierda*/
-		for (int i=0; i<jm.FILAS; i++){
-			ArrayList<String> fila = new ArrayList<String>();
-			for(int j=0; j<jm.COLUMNAS; j++){
-				fila.add("-");				
-			}
-			tablero.add(fila);
-		}
-		tablero.get(0).set(6, "X");
-		tablero.get(1).set(5, "X");
-		tablero.get(2).set(4, "X");
-		tablero.get(3).set(3, "X");
-		c.estructuraPrueba(jm, vista, tablero, c);
-		
-		/*-------------------------------------------------------------*/
-		tablero = new ArrayList<>();
-		/*6 Tablero vacio victoria vertical*/
-		for (int i=0; i<jm.FILAS; i++){
-			ArrayList<String> fila = new ArrayList<String>();
-			for(int j=0; j<jm.COLUMNAS; j++){
-				fila.add("-");				
-			}
-			tablero.add(fila);
-		}
-		tablero.get(0).set(0, "X");
-		tablero.get(1).set(0, "X");
-		tablero.get(2).set(0, "X");
-		tablero.get(3).set(0, "X");
-		c.estructuraPrueba(jm, vista, tablero, c);
-		
-		/*-------------------------------------------------------------*/
-		tablero = new ArrayList<>();
-		/*7 Tablero vacio victoria horizontal*/
-		for (int i=0; i<jm.FILAS; i++){
-			ArrayList<String> fila = new ArrayList<String>();
-			for(int j=0; j<jm.COLUMNAS; j++){
-				fila.add("-");				
-			}
-			tablero.add(fila);
-		}
-		tablero.get(0).set(0, "X");
-		tablero.get(0).set(1, "X");
-		tablero.get(0).set(2, "X");
-		tablero.get(0).set(3, "X");
-		c.estructuraPrueba(jm, vista, tablero, c);
-		/*-------------------------------------------------------------*/
-		
-		tablero = new ArrayList<>();
-		/*8 Tablero lleno no victoria*/
-		for (int i=0; i<jm.FILAS; i++){
-			ArrayList<String> fila = new ArrayList<String>();
-			for(int j=0; j<jm.COLUMNAS; j++){
-				fila.add("R");
-				
-			}
-			tablero.add(fila);
-		}
-		c.estructuraPrueba(jm, vista, tablero, c);
-		/*-------------------------------------------------------------*/
-		
-		tablero = new ArrayList<>();
-		/*9 Tablero vacio*/
-		for (int i=0; i<jm.FILAS; i++){
-			ArrayList<String> fila = new ArrayList<String>();
-			for(int j=0; j<jm.COLUMNAS; j++){
-				fila.add("-");
-				
-			}
-			tablero.add(fila);
-		}
-		c.estructuraPrueba(jm, vista, tablero, c);
-		
-	}
-	private void estructuraPrueba(JuegoModelo jm, JuegoVista vista, ArrayList<ArrayList<String>> tablero, ControladorTexto c){
-		jm.setTablero(tablero);
-		c = new ControladorTexto();
-		c.modelo = jm;
-		vista = new JuegoVista(jm, c);
-		//Mostrar el tablero
-		vista.muestraTablero();
-		System.out.println(c.finJuego(null, null));
 	}
 }

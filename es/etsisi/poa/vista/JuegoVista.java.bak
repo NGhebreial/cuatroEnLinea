@@ -28,6 +28,12 @@ public class JuegoVista {
 			}
 			System.out.println();
 		}
+//		for(ArrayList<String> filas: tablero){
+//			for (String columna: filas){
+//				System.out.print(columna);
+//			}
+//			System.out.println();
+//		}
 		System.out.println(".................................................");
 	}
 	/**Inicia el movimiento recogiendo el valor por teclado*/
