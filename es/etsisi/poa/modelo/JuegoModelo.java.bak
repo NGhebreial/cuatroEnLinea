@@ -10,6 +10,8 @@ public class JuegoModelo {
 	
 	private Boolean hayFinJuego;
 	
+	private String mensajeFinJuego;
+	
 	private ArrayList<ArrayList<String>> tablero = new ArrayList<>();
 	
 	private String fichaActual;
@@ -65,6 +67,14 @@ public class JuegoModelo {
 
 	public void setHayFinJuego(Boolean hayFinJuego) {
 		this.hayFinJuego = hayFinJuego;
+	}
+
+	public String getMensajeFinJuego() {
+		return mensajeFinJuego;
+	}
+
+	public void setMensajeFinJuego(String mensajeFinJuego) {
+		this.mensajeFinJuego = mensajeFinJuego;
 	}
 
 	public String getFichaActual() {

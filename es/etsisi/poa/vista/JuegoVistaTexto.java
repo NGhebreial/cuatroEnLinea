@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import es.etsisi.poa.controlador.ControladorTexto;
 import es.etsisi.poa.modelo.JuegoModelo;
 
-public class JuegoVista {
+public class JuegoVistaTexto {
 	
 	private JuegoModelo juegoModelo;
 	private ControladorTexto controlador;
 
-	public JuegoVista(JuegoModelo juegoModelo, ControladorTexto controlador){
+	public JuegoVistaTexto(JuegoModelo juegoModelo, ControladorTexto controlador){
 		setJuegoModelo(juegoModelo);
 		setControlador(controlador);
 	}
