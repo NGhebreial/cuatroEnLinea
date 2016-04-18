@@ -23,22 +23,6 @@ public class JuegoVistaGrafico {
 	private ControladorGrafico controlador;
 
 	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					JuegoVistaGrafico window = new JuegoVistaGrafico(null,null);
-//					window.frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
-	/**
 	 * Create the application.
 	 */
 	public JuegoVistaGrafico(JuegoModelo juegoModelo,ControladorGrafico controlador) {
@@ -81,10 +65,10 @@ public class JuegoVistaGrafico {
 	public void victoria(Boolean victoria){
 		muestraTablero();
 		if(victoria){
-			VistaFinJuego vistaFin = new VistaFinJuego("VICTORIA PARA LAS FICHAS "+getJuegoModelo().getFichaActual(), frame);
+			new VistaFinJuego("VICTORIA PARA LAS FICHAS "+getJuegoModelo().getFichaActual(), frame);
 		}
 		else{
-			VistaFinJuego vistaFin = new VistaFinJuego("Nadie ha conseguido ganar", frame);
+			new VistaFinJuego("Nadie ha conseguido ganar", frame);
 		}
 	}
 	
@@ -98,9 +82,9 @@ public class JuegoVistaGrafico {
 		label.setFont(new Font("Serif", Font.BOLD, 16));
 		//Color de la letra
 		if(tablero.get(posFila).get(posColumna).equals("X"))
-			label.setForeground(Color.BLUE);
-		else if(tablero.get(posFila).get(posColumna).equals("X"))
-			label.setForeground(Color.GREEN);
+			label.setForeground(new Color(207, 144, 8));
+		else if(tablero.get(posFila).get(posColumna).equals("O"))
+			label.setForeground(new Color(37, 122, 20));
 		else 
 			label.setForeground(Color.BLACK);
 		label.setName(posColumna.toString());
@@ -110,7 +94,6 @@ public class JuegoVistaGrafico {
 			{  
 				public void mouseClicked(MouseEvent e)  
 				{
-					System.out.println("ENTRA "+label.getName());
 					getControlador().compruebaCoordenadaValida(label.getName());
 				}  
 			});
@@ -122,9 +105,12 @@ public class JuegoVistaGrafico {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setBackground(new Color(0, 0, 0));
+		frame.getContentPane().setBackground(new Color(211, 236, 245));
 		frame.setBounds(100, 100, 770, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setResizable(false);
 	}
 
 	public JuegoModelo getJuegoModelo() {

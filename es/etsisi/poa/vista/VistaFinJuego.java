@@ -1,5 +1,6 @@
 package es.etsisi.poa.vista;
 
+import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JFrame;
@@ -20,6 +21,7 @@ public class VistaFinJuego {
 	 */
 	public VistaFinJuego(String mensaje, JFrame vistaPadre) {
 		lblNewLabel = new JLabel(mensaje, JLabel.CENTER);
+		
 		initialize(vistaPadre);
 	}
 
@@ -32,6 +34,7 @@ public class VistaFinJuego {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		
 		lblNewLabel.setFont(new Font("Serif", Font.BOLD, 16));	
+		lblNewLabel.setForeground(new Color(207, 8, 8));
 		
 		JButton btnAceptar = new JButton("Aceptar");
 		btnAceptar.addMouseListener(new MouseAdapter()   {
