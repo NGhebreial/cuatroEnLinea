@@ -6,17 +6,30 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" href="css/estilos.css" />
+	<script type="text/javascript" src="js/tablero.js"></script>
 </head>
 
 <body>
-	<c:forEach items="${ tablero }" var = "filas" varStatus="i">
-		<c:forEach items="${ filas }" var = "columna" varStatus="j">		
-			<div id ="${ i }${ j }"><c:out value="${ columna }"/></div>
-		</c:forEach>
+<h3>Le toca jugar al jugador con fichas de color <c:if test="${ modelo.fichaActual eq 'X' }"><p style ="color: red;">Rojo</p></c:if> <c:if test="${ modelo.fichaActual eq 'O' }"><p style ="color: blue;">Azul</p></c:if></h3>
+	<c:set value="${ fn:length(modelo.tablero) }" var="tamTablero"/>
+	<div class="fondo">
+	<c:forEach begin="0" end="${tamTablero}" varStatus="i">
+		<div >
+			<c:set value="${ tamTablero - (i.index) }" var="indice"/>
+			<c:forEach items="${ modelo.tablero[indice] }" var="columna" varStatus="j">
+				<span class="celda" id="${ i.index }-${ j.index }"
+					<c:if test="${  modelo.tablero[indice][j.index] eq 'X'}">style ="background-color:red;"</c:if>
+					<c:if test="${  modelo.tablero[indice][j.index] eq 'O'}">style="background-color: blue;"</c:if>>
+				</span>
+			</c:forEach>
+		</div>
 	</c:forEach>
+	</div>
 </body>
 
 </html>

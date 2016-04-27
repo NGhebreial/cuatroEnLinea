@@ -10,13 +10,22 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<script type="text/javascript" src="js/jquery.js"></script>
-	<script type="text/javascript" src="js/juegoVistaWeb.js"></script>
+	<script type="text/javascript" src="js/jquery-ui.js"></script>
+	<script type="text/javascript" src="js/finJuego.js"></script>
 	<link rel="stylesheet" href="css/estilos.css" />
 </head>
 
 <body>
-	<input type="hidden" name="peticion" id="peticion" value="" />
-	<div id="cargaTablero" class="cuerpo"></div>
+	<c:if test="${mensaje eq 'victoria'}">
+	<h3 id="mensaje">VICTORIA PARA LAS FICHAS <c:if test="${ modelo.fichaActual eq 'X' }">ROJAS</c:if> <c:if test="${ modelo.fichaActual eq 'O' }">AZULES</c:if></h3>
+	</c:if>
+	<c:if test="${mensaje eq 'empate'}">
+	<h3 id="mensaje">Nadie ha conseguido ganar :(</h3>
+	</c:if>
+	<br/>
+		<input type="hidden" name="peticion" id="peticion" value="volverEmpezar"/>
+		<div id="botones"><input type="button" name="otraVez" id="otraVez" value="Volver a jugar" class="boton"/></div>
+	
 </body>
 
 </html>
